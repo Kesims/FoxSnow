@@ -1,0 +1,9 @@
+##########################
+# MESSAGES CONFIGUTATION #
+##########################
+
+no-perms: "&cYou dont have enough permissions to run this command!"
+effect-disabled: "&7Snow effect was successfully &cdisabled&f."
+effect-enabled: "&7Snow effect was successfully &aenabled&f."
+disabled-placeholder: "&cDisabled"
+enabled-placeholder: "&aEnabled"

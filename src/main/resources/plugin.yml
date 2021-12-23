@@ -1,0 +1,12 @@
+name: FoxSnow
+version: 1.9
+author: Kesims
+main: me.Kesims.FoxSnow.main
+api-version: 1.17
+softdepend:
+  - PlaceholderAPI
+  - WorldGuard
+commands:
+  foxsnow:
+    description: Main command
+    aliases: [snow, fsnow, fs]
