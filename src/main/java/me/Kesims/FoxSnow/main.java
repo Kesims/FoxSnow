@@ -2,6 +2,7 @@ package me.Kesims.FoxSnow;
 
 
 import me.Kesims.FoxSnow.commands.foxSnow;
+import me.Kesims.FoxSnow.events.snowmanEffectEvents;
 import me.Kesims.FoxSnow.files.disabledPlayers;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.files.messages;
@@ -30,6 +31,7 @@ public class main extends JavaPlugin
         checkParticleIntegrity.check();
         setupTasks();
         setupPlaceholders();
+        setupEvents();
         report.info("Plugin loaded!");
     }
 
@@ -79,6 +81,10 @@ public class main extends JavaPlugin
             autoSave a = new autoSave();
             a.runTaskTimerAsynchronously(this, 6000, 6000L); //every 5 minutes
         }
+    }
+    private void setupEvents()
+    {
+        getServer().getPluginManager().registerEvents(new snowmanEffectEvents(), this);
     }
     private void setupPlaceholders()
     {

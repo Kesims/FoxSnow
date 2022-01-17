@@ -12,6 +12,7 @@ import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
 
 import me.Kesims.FoxSnow.pluginData.hookState;
+import me.Kesims.FoxSnow.utils.snowmanEffect;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -57,6 +58,7 @@ public class snowTask extends BukkitRunnable
                 if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable"))) forceShow = true;
             }
 
+            //Exit conditions - the effect won't be shown to player
             if(!forceShow)
             {
                 if(dataStorage.disableSnow.contains(p.getName())) continue;
@@ -66,6 +68,7 @@ public class snowTask extends BukkitRunnable
                 if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) continue;
             }
 
+            //Particle snow effect
             Random gen = new Random();
             int max = config.get().getInt("max-particle-distance");
             for(int i = 0; i < config.get().getInt("particle-count"); i++)

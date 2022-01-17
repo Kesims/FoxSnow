@@ -34,6 +34,11 @@ particles:
   - SNOWFLAKE
   - END_ROD
 
+snowman-effect:
+  range: -1           # Set to -1 to disable, else defines range around player where snow will be placed on the ground. Do not set this too high (it could cause a lag, even when it is as much async as possible), especially if you have a lot of players. Ideal value is around 3.
+  duration: 100       # How long will the snow stay on the ground before being removed, in ticks. Set to -1 to keep the snow on the ground "forever"
+  destroyable: false  # Defines if players will be able to break the snow and get snowballs from it
+
 # You can simply enable and disable hooks for other plugins here.
 # It is recommended to disable all hooks that you are not using to increase FoxSnow performance
 hooks:
