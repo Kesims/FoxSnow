@@ -13,10 +13,10 @@ import me.Kesims.FoxSnow.pluginData.dataStorage;
 import me.Kesims.FoxSnow.pluginData.hookState;
 import me.Kesims.FoxSnow.pluginData.snowmanBlocks;
 import me.Kesims.FoxSnow.utils.misc;
-import me.Kesims.FoxSnow.utils.report;
 import me.Kesims.FoxSnow.utils.snowmanEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +28,7 @@ public class snowmanEffectEvents implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e)
     {
-        if(snowmanBlocks.blockList.contains(e.getBlock()))
+        if(snowmanBlocks.blockList.contains(e.getBlock()) && e.getBlock().getType() == Material.SNOW)
             e.setCancelled(true);
     }
 

@@ -8,6 +8,7 @@ import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.files.messages;
 import me.Kesims.FoxSnow.hooks.worldGuardHook;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
+import me.Kesims.FoxSnow.pluginData.snowmanBlocks;
 import me.Kesims.FoxSnow.tabCompleters.foxSnowTabCompleter;
 import me.Kesims.FoxSnow.tasks.autoSave;
 import me.Kesims.FoxSnow.tasks.snowTask;
@@ -47,6 +48,7 @@ public class main extends JavaPlugin
     {
         dataStorage.saveDisabledToStorage();
         disabledPlayers.save();
+        if(snowmanBlocks.blockList.size() > 0) snowmanBlocks.emergencyCleanup();
         report.info("Plugin disabled!");
     }
 

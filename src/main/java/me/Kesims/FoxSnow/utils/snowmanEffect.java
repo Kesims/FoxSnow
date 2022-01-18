@@ -7,22 +7,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class snowmanEffect
 {
+    private static Random rnd = new Random();
+
     public static List<Block> getApplicableBlocks(Location playerLoc) //the playerLoc should be Block location ideally
     {
         List<Block> applicableBlocks = new ArrayList<>();
-        double radiusSquared = Math.pow(config.get().getInt("snowman-effect.range"), 2);
-        for(int x = -config.get().getInt("snowman-effect.range"); x <= config.get().getInt("snowman-effect.range"); x++)
+        int range = config.get().getInt("snowman-effect.range");
+        double rangeSquared = Math.pow(range, 2);
+        for(int x = -range; x <= range; x++)
         {
-            for(int z = -config.get().getInt("snowman-effect.range"); z <= config.get().getInt("snowman-effect.range"); z++)
+            for(int z = -range; z <= range; z++)
             {
-                if(Math.pow(z, 2) + Math.pow(x, 2) > radiusSquared) continue; //It should be a circle, so skip values beyond the circle range
+                if(Math.pow(z, 2) + Math.pow(x, 2) > rangeSquared) continue; //It should be a circle, so skip values beyond the circle range
                 Location tempLoc = playerLoc.clone().add(x, 0, z);
                 for(int y = -2; y <= 2; y++)
                 {
@@ -30,7 +35,8 @@ public class snowmanEffect
                     if(b.getType() == Material.SNOW) break;
                     if(b.getType() == Material.AIR)
                     {
-                        if(b.getLocation().clone().add(0, -1, 0).getBlock().getType().isSolid())
+                        Material m = b.getLocation().clone().add(0, -1, 0).getBlock().getType();
+                        if(m.isSolid() && m.isOccluding())
                         {
                             applicableBlocks.add(b);
                             break;
@@ -60,6 +66,9 @@ public class snowmanEffect
                 for(Block b : blocks)
                 {
                     b.setType(Material.SNOW);
+                    Snow s = (Snow) b.getBlockData();
+                    s.setLayers(3 - rnd.nextInt(3));
+                    b.setBlockData(s);
                 }
             }
         });
@@ -73,8 +82,10 @@ public class snowmanEffect
                 {
                     for(Block b : blocks)
                     {
-                        b.setType(Material.AIR);
+                        if(b.getType() == Material.SNOW)
+                            b.setType(Material.AIR);
                     }
+                    snowmanBlocks.blockList.removeAll(blocks);
                 }
             }, config.get().getInt("snowman-effect.duration"));
         }
