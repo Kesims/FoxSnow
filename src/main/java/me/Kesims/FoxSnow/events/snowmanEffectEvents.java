@@ -38,7 +38,7 @@ public class snowmanEffectEvents implements Listener
         Bukkit.getScheduler().runTaskAsynchronously(misc.plugin, new Runnable() {
             @Override
             public void run() {
-                boolean snowmanEff = config.get().getInt("snowman-effect.range") > 1;
+                boolean snowmanEff = config.get().getInt("snowman-effect.range") > 0;
 
                 Player p = e.getPlayer();
                 Location center = p.getLocation();
