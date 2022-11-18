@@ -48,7 +48,7 @@ public class snowmanEffect
         return applicableBlocks;
     }
 
-    public static void handleEffect(Player player) //This should be run async -- task created in event handler
+    public static void handleEffect(Player player) //This should run async -- task created in event handler
     {
         if(dataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
 

@@ -1,18 +1,8 @@
 package me.Kesims.FoxSnow.tasks;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
-
-import me.Kesims.FoxSnow.pluginData.hookState;
-import me.Kesims.FoxSnow.utils.snowmanEffect;
+import me.Kesims.FoxSnow.utils.effectEvaluation;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -43,30 +33,9 @@ public class snowTask extends BukkitRunnable
 
         for(Player p : Bukkit.getOnlinePlayers())
         {
+            if(!effectEvaluation.isEffectApplicable(p)) return;
+
             Location center = p.getLocation();
-            boolean forceShow = false;
-
-            if(hookState.worldGuard)
-            {
-                com.sk89q.worldedit.util.Location aLoc = BukkitAdapter.adapt(center);
-                FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                RegionQuery query = container.createQuery();
-                ApplicableRegionSet set = query.getApplicableRegions(aLoc);
-
-                if(set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable"))) continue;
-                if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable"))) forceShow = true;
-            }
-
-            //Exit conditions - the effect won't be shown to player
-            if(!forceShow)
-            {
-                if(dataStorage.disableSnow.contains(p.getName())) continue;
-                if(!config.get().getList("enabled-worlds").contains(p.getWorld().getName())) continue;
-                if(config.get().getBoolean("require-permission") && !p.hasPermission("foxsnow.show")) continue;
-                if(config.get().getBoolean("rain-disable-snow")  && !p.getWorld().isClearWeather()) continue;
-                if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) continue;
-            }
 
             //Particle snow effect
             Random gen = new Random();
