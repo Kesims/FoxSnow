@@ -3,8 +3,8 @@ package me.Kesims.FoxSnow;
 
 import me.Kesims.FoxSnow.commands.foxSnow;
 import me.Kesims.FoxSnow.events.snowmanEffectEvents;
-import me.Kesims.FoxSnow.files.disabledPlayers;
 import me.Kesims.FoxSnow.files.config;
+import me.Kesims.FoxSnow.files.disabledPlayers;
 import me.Kesims.FoxSnow.files.messages;
 import me.Kesims.FoxSnow.hooks.worldGuardHook;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
@@ -17,12 +17,16 @@ import me.Kesims.FoxSnow.utils.placeholder;
 import me.Kesims.FoxSnow.utils.report;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class main extends JavaPlugin
 {
+    private final ArrayList<BukkitRunnable> taskPool = new ArrayList<>();
+
     @Override
     public void onEnable()
     {
@@ -49,6 +53,8 @@ public class main extends JavaPlugin
         dataStorage.saveDisabledToStorage();
         disabledPlayers.save();
         if(snowmanBlocks.blockList.size() > 0) snowmanBlocks.emergencyCleanup();
+        for(BukkitRunnable b : taskPool)
+            b.cancel();
         report.info("Plugin disabled!");
     }
 
@@ -77,11 +83,13 @@ public class main extends JavaPlugin
     {
         snowTask s = new snowTask();
         s.runTaskTimerAsynchronously(this, 100, 10L); //every 0.5 seconds
+        taskPool.add(s);
 
         if(config.get().getBoolean("auto-save-data"))
         {
             autoSave a = new autoSave();
             a.runTaskTimerAsynchronously(this, 6000, 6000L); //every 5 minutes
+            taskPool.add(a);
         }
     }
     private void setupEvents()

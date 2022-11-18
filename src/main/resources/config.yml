@@ -11,6 +11,7 @@ show-debug-messages: false
 
 auto-save-data: true
 
+# Put all worlds that you want the snow to appear here. Please, note that world names are case-sensitive.
 enabled-worlds:
   - example_world
   - another_example_world
@@ -20,8 +21,8 @@ require-permission: true # Permission foxsnow.show and foxsnow.toggle won't be n
 snow-under-blocks: true # If set to false, snow will only appear in places where there is no block above it
 rain-disable-snow: true # Stop snow effect, if it is raining (or snowing) naturally in the world player is in
 
-particle-count: 200
-max-particle-distance: 25
+particle-count: 200           # Number of particles that will be spawned in each iteration
+max-particle-distance: 25     # Maximum distance from a player where the particle can spawn
 
 # You can limit when it is going to snow, minecraft day has 24000 ticks, by default it will always snow.
 # If you want to snow for example only at night, set this to 12500 - 23500. More info: https://minecraft.fandom.com/wiki/Daylight_cycle
