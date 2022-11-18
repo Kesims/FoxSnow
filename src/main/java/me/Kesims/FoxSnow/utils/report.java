@@ -10,26 +10,26 @@ public class report
 
     public static void info(String message)
     {
-        l.info(chat.barevne(message));
+        l.info(chat.colored(message));
     }
 
     public static void success(String message)
     {
-        l.info(chat.barevne("&a" + message));
+        l.info(chat.colored("&a" + message));
     }
 
     public static void error(String message)
     {
-        l.severe(chat.barevne(message));
+        l.severe(chat.colored(message));
     }
 
     public static void warn(String message)
     {
-        l.warning(chat.barevne(message));
+        l.warning(chat.colored(message));
     }
 
     public static void debug(String message)
     {
-        if(config.get().getBoolean("show-debug-messages")) l.info(chat.barevne("&5" + message));
+        if(config.get().getBoolean("show-debug-messages")) l.info(chat.colored("&5" + message));
     }
 }

@@ -24,6 +24,7 @@ public class foxSnow implements CommandExecutor {
                     config.reload();
                     dataStorage.loadDisabledfromStorage();
                     messages.reload();
+                    chat.reloadPrefix();
                     chat.sendMessage(sender, "&aPlugin successfully reloaded!");
                     checkParticleIntegrity.check();
                 }
