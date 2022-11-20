@@ -36,7 +36,7 @@ public class snowmanEffect
                     if(b.getType() == Material.AIR)
                     {
                         Material m = b.getLocation().clone().add(0, -1, 0).getBlock().getType();
-                        if(m.isSolid() && m.isOccluding())
+                        if(m.isSolid() && m.isOccluding() && m != Material.PACKED_ICE)
                         {
                             applicableBlocks.add(b);
                             break;

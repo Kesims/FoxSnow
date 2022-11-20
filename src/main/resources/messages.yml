@@ -7,3 +7,17 @@ effect-disabled: "&7Snow effect was successfully &cdisabled&f."
 effect-enabled: "&7Snow effect was successfully &aenabled&f."
 disabled-placeholder: "&cDisabled"
 enabled-placeholder: "&aEnabled"
+
+
+#
+# Messages for /foxsnow why. These are usually used for debug only.
+#
+debug-messages:
+  snow-is-working: "&7The snow should be &avisible&7! If you can't see it, please, check your Minecraft client configuration."
+  effect-toggled-off: "&7The snow is hidden because you have the effect &ctoggled off&7."
+  rainy-weather: "&7The snow is hidden because &cit is raining/snowing naturally&7 in the world."
+  missing-permission: "&7The snow is hidden because you are &cmissing foxsnow.show permission&7."
+  world-not-configured: "&7The snow is hidden it is &cnot configured to show up in this world&7. Check your config.yml."
+  wrong-time: "&7The snow is hidden because it is configured not to show up in this &cpart of the minecraft day&7."
+  blocks-above: "&7The snow is hidden because there are &cblocks above you&7."
+  hook-force-disable: "&7The snow is hidden because of &cthird-party plugin hook&7."

@@ -5,6 +5,7 @@ import me.Kesims.FoxSnow.files.messages;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
 import me.Kesims.FoxSnow.utils.chat;
 import me.Kesims.FoxSnow.utils.checkParticleIntegrity;
+import me.Kesims.FoxSnow.utils.effectEvaluation;
 import me.Kesims.FoxSnow.utils.report;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -57,6 +58,24 @@ public class foxSnow implements CommandExecutor {
                 }
                 else
                 {
+                    report.info("This command can be only used in-game!");
+                }
+            }
+            if(args[0].equalsIgnoreCase("why")) {
+                if(sender instanceof Player p) {
+                    if(sender.hasPermission("foxsnow.admin"))  {
+                        String str = "\n &l--- DEBUG INFO ---&7" +
+                                     "\n* World name: " + p.getWorld().getName() +
+                                     "\n* World time: " + p.getWorld().getTime() +
+                                     "\n* World storm: " + p.getWorld().hasStorm();
+                        chat.sendMessage(p, str);
+                        effectEvaluation.debugIsEffectApplicable(p);
+                    }
+                    else {
+                        chat.sendMessage(sender, messages.getMessage("no-perms"));
+                    }
+                }
+                else {
                     report.info("This command can be only used in-game!");
                 }
             }

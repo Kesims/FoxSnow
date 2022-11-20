@@ -19,6 +19,7 @@ public class foxSnowTabCompleter implements TabCompleter
             if(sender.hasPermission("foxsnow.admin"))
             {
                 result.add("reload");
+                result.add("why");
             }
             if(sender.hasPermission("foxsnow.toggle")  || !config.get().getBoolean("require-permission"))
             {

@@ -52,9 +52,10 @@ public class messages
                 }
             }
             messages.options().copyDefaults(true);
-            messages.options().header("#########################\n" +
-                    " MESSAGES CONFIGUTATION #\n" +
-                    "#########################\n");
+            messages.options().header(
+                    "##########################\n" +
+                          "# MESSAGES CONFIGUTATION #\n" +
+                          "##########################\n");
             messages.options().copyHeader(true);
             if(wasUpdated) save();
         }
