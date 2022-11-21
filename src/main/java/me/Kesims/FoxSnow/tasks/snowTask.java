@@ -3,6 +3,7 @@ package me.Kesims.FoxSnow.tasks;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
 import me.Kesims.FoxSnow.utils.effectEvaluation;
+import me.Kesims.FoxSnow.utils.report;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -24,8 +25,7 @@ public class snowTask extends BukkitRunnable
         List<Particle> particles = new ArrayList<>();
         for(String ptc : (List<String>) config.get().get("particles"))
         {
-            try
-            {
+            try {
                 particles.add(Particle.valueOf(ptc));
             }
             catch (Exception e) {}
@@ -33,7 +33,7 @@ public class snowTask extends BukkitRunnable
 
         for(Player p : Bukkit.getOnlinePlayers())
         {
-            if(!effectEvaluation.isEffectApplicable(p)) return;
+            if(!effectEvaluation.isEffectApplicable(p)) continue;
 
             Location center = p.getLocation();
 
@@ -43,7 +43,12 @@ public class snowTask extends BukkitRunnable
             for(int i = 0; i < config.get().getInt("particle-count"); i++)
             {
                 Location pLoc = center.clone().add(new Vector(gen.nextInt((2*max) + 1) - max, gen.nextInt((2*max) + 1)-max, gen.nextInt((2*max) + 1) - max));
-                if(!config.get().getBoolean("snow-under-blocks") && pLoc.getY() < pLoc.getWorld().getHighestBlockAt(pLoc).getY()) continue; // Do not create particle if there is a block above it
+                try {
+                    if(!config.get().getBoolean("snow-under-blocks") && pLoc.getY() < pLoc.getWorld().getHighestBlockAt(pLoc).getY()) continue; // Do not create particle if there is a block above it
+                }
+                catch (Exception exc) {
+                    report.debug("Something went wrong, please, contact the developer.");
+                }
 
                 //SPAWN THE PARTICLE
                 Particle particle = particles.get(gen.nextInt(particles.size()));

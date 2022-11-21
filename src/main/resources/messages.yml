@@ -17,7 +17,7 @@ debug-messages:
   effect-toggled-off: "&7The snow is hidden because you have the effect &ctoggled off&7."
   rainy-weather: "&7The snow is hidden because &cit is raining/snowing naturally&7 in the world."
   missing-permission: "&7The snow is hidden because you are &cmissing foxsnow.show permission&7."
-  world-not-configured: "&7The snow is hidden it is &cnot configured to show up in this world&7. Check your config.yml."
+  world-not-configured: "&7The snow is hidden because it is &cnot configured to show up in this world&7. Check your config.yml."
   wrong-time: "&7The snow is hidden because it is configured not to show up in this &cpart of the minecraft day&7."
   blocks-above: "&7The snow is hidden because there are &cblocks above you&7."
   hook-force-disable: "&7The snow is hidden because of &cthird-party plugin hook&7."
