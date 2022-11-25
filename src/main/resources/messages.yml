@@ -21,3 +21,4 @@ debug-messages:
   wrong-time: "&7The snow is hidden because it is configured not to show up in this &cpart of the minecraft day&7."
   blocks-above: "&7The snow is hidden because there are &cblocks above you&7."
   hook-force-disable: "&7The snow is hidden because of &cthird-party plugin hook&7."
+  invalid-biome: "&7The effect is &cblocked in this biome&7. Check your config.yml."

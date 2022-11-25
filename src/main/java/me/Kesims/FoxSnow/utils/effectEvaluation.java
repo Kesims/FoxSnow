@@ -15,6 +15,8 @@ import me.Kesims.FoxSnow.pluginData.hookState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class effectEvaluation {
 
     // Evaluates if effect should be shown to the player
@@ -39,7 +41,7 @@ public class effectEvaluation {
         if(config.get().getBoolean("require-permission") && !p.hasPermission("foxsnow.show")) return false;
         if(config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()) return false;
         if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) return false;
-
+        if(!evaluateBiomeFilter(p.getWorld().getBiome(p.getLocation()).name())) return false;
 
         return true; // Passed all requirements, effect should be shown
     }
@@ -93,6 +95,25 @@ public class effectEvaluation {
             return;
         };
 
+        if(!evaluateBiomeFilter(p.getWorld().getBiome(p.getLocation()).name())) {
+            chat.sendMessage(p, messages.getMessage("debug-messages.invalid-biome"));
+            return;
+        }
+
+
         chat.sendMessage(p, messages.getMessage("debug-messages.snow-is-working"));
+    }
+
+
+    public static boolean evaluateBiomeFilter(String biomeName) {
+        if(!config.get().getBoolean("biome-filter.enabled")) return true;
+        List<String> biomeList = config.get().getStringList("biome-filter.biomes");
+        if(config.get().getString("biome-filter.type").equalsIgnoreCase("BLACKLIST")) {
+            return !biomeList.contains(biomeName);
+        }
+        if(config.get().getString("biome-filter.type").equalsIgnoreCase("WHITELIST")) {
+            return biomeList.contains(biomeName);
+        }
+        return true;
     }
 }

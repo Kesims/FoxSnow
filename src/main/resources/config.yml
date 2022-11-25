@@ -35,6 +35,18 @@ particles:
   - SNOWFLAKE
   - END_ROD
 
+# You can use biome filter to enable the effect only in certain biomes
+# Available types:
+# :: BLACKLIST (the effect will not appear in biomes listed bellow)
+# :: WHITELIST (the effect will appear only in biomes that are listed)
+# You can find list of all possible biomes on the plugin's main page (http://foxsnow.fox-code.eu)
+biome-filter:
+  enabled: false
+  type: BLACKLIST
+  biomes:
+    - BLOCKED_BIOME_ONE
+    - ANOTHER_BLOCKED_BIOME
+
 snowman-effect:
   range: -1           # Set to -1 to disable, else defines range around player where snow will be placed on the ground. Do not set this too high (it could cause a lag, even when it is as much async as possible), especially if you have a lot of players. Ideal value is around 3.
   duration: 100       # How long will the snow stay on the ground before being removed, in ticks. Set to -1 to keep the snow on the ground "forever"

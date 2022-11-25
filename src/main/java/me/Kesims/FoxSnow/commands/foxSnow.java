@@ -67,6 +67,7 @@ public class foxSnow implements CommandExecutor {
                         String str = "\n &l--- DEBUG INFO ---&7" +
                                      "\n* World name: " + p.getWorld().getName() +
                                      "\n* World time: " + p.getWorld().getTime() +
+                                     "\n* Biome: " + p.getWorld().getBiome(p.getLocation()).name() +
                                      "\n* World storm: " + p.getWorld().hasStorm();
                         chat.sendMessage(p, str);
                         effectEvaluation.debugIsEffectApplicable(p);

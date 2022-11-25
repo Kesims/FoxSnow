@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>FoxSnow</artifactId>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.4-SNAPSHOT</version>
 
     <build>
         <directory>D:\MINERCAFT-PLUGINS\FoxSnow</directory>

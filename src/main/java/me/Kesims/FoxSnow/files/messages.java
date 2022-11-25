@@ -42,7 +42,7 @@ public class messages
             InputStreamReader d = new InputStreamReader(misc.plugin.getResource("messages.yml"), StandardCharsets.UTF_8);
             FileConfiguration defaults = YamlConfiguration.loadConfiguration(d);
             boolean wasUpdated = false;
-            for(String key : defaults.getKeys(false))
+            for(String key : defaults.getKeys(true))
             {
                 if(!messages.contains(key))
                 {
