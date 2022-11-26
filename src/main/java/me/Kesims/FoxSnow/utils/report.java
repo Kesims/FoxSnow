@@ -8,28 +8,23 @@ public class report
 {
     private static Logger l = misc.plugin.getLogger();
 
-    public static void info(String message)
-    {
+    public static void info(String message) {
         l.info(chat.colored(message));
     }
 
-    public static void success(String message)
-    {
+    public static void success(String message) {
         l.info(chat.colored("&a" + message));
     }
 
-    public static void error(String message)
-    {
+    public static void error(String message) {
         l.severe(chat.colored(message));
     }
 
-    public static void warn(String message)
-    {
+    public static void warn(String message) {
         l.warning(chat.colored(message));
     }
 
-    public static void debug(String message)
-    {
+    public static void debug(String message) {
         if(config.get().getBoolean("show-debug-messages")) l.info(chat.colored("&5" + message));
     }
 }

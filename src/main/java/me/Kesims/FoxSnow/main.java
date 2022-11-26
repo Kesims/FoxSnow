@@ -23,13 +23,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class main extends JavaPlugin
-{
+public class main extends JavaPlugin {
     private final ArrayList<BukkitRunnable> taskPool = new ArrayList<>();
 
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
         setupCommands();
         setupTabCompleters();
         setupData();
@@ -41,15 +39,13 @@ public class main extends JavaPlugin
     }
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         setupFiles();
         setupHooks();
     }
 
     @Override
-    public void onDisable()
-    {
+    public void onDisable() {
         dataStorage.saveDisabledToStorage();
         disabledPlayers.save();
         if(snowmanBlocks.blockList.size() > 0) snowmanBlocks.emergencyCleanup();
@@ -58,8 +54,7 @@ public class main extends JavaPlugin
         report.info("Plugin disabled!");
     }
 
-    public void setupFiles()
-    {
+    public void setupFiles() {
         if(!getDataFolder().exists()) getDataFolder().mkdirs();
         config.setup();
         messages.setup();
@@ -67,49 +62,38 @@ public class main extends JavaPlugin
         if(!dataDir.exists()) dataDir.mkdir();
         disabledPlayers.setup();
     }
-    public void setupData()
-    {
+    public void setupData() {
         dataStorage.loadDisabledfromStorage();
     }
-    public void setupCommands()
-    {
+    public void setupCommands() {
         getCommand("foxsnow").setExecutor(new foxSnow());
     }
-    public void setupTabCompleters()
-    {
+    public void setupTabCompleters() {
         getCommand("foxsnow").setTabCompleter(new foxSnowTabCompleter());
     }
-    public void setupTasks()
-    {
+    public void setupTasks() {
         snowTask s = new snowTask();
         s.runTaskTimerAsynchronously(this, 100, 10L); //every 0.5 seconds
         taskPool.add(s);
 
-        if(config.get().getBoolean("auto-save-data"))
-        {
+        if(config.get().getBoolean("auto-save-data")) {
             autoSave a = new autoSave();
             a.runTaskTimerAsynchronously(this, 6000, 6000L); //every 5 minutes
             taskPool.add(a);
         }
     }
-    private void setupEvents()
-    {
+    private void setupEvents() {
         getServer().getPluginManager().registerEvents(new snowmanEffectEvents(), this);
     }
-    private void setupPlaceholders()
-    {
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
-        {
+    private void setupPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new placeholder().register();
         }
     }
-    private void setupHooks()
-    {
+    private void setupHooks() {
         //WorldGuard hook
-        if(config.get().getBoolean("hooks.worldguard"))
-        {
-            if(Bukkit.getPluginManager().getPlugin("WorldGuard") != null || Bukkit.getPluginManager().getPlugin("WorldEdit") != null)
-            {
+        if(config.get().getBoolean("hooks.worldguard")) {
+            if(Bukkit.getPluginManager().getPlugin("WorldGuard") != null || Bukkit.getPluginManager().getPlugin("WorldEdit") != null) {
                 worldGuardHook.initialize();
             }
             else report.warn("WorldGuard hook is enabled, plugin was not found though! It is recommended to disable the hook in config.yml in order to improve FoxSnow performance!");

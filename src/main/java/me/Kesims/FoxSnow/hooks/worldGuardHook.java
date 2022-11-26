@@ -8,10 +8,8 @@ import me.Kesims.FoxSnow.utils.report;
 
 public class worldGuardHook
 {
-    public static void initialize()
-    {
-        try
-        {
+    public static void initialize() {
+        try {
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
             StateFlag flag = new StateFlag("foxsnow-force-enable", false);
             registry.register(flag);
@@ -24,8 +22,7 @@ public class worldGuardHook
             hookState.worldGuard = true;
             report.info("WorldGuard hook enabled!");
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             report.error("Failed to hook into WorldGuard! Is working? Please, check your server configuration or disable the hook, if this is a mistake and you don't want to hook into WorldGuard!");
         }
 

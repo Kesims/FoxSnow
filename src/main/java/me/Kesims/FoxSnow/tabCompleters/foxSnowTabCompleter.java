@@ -8,21 +8,17 @@ import org.bukkit.command.TabCompleter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class foxSnowTabCompleter implements TabCompleter
-{
+public class foxSnowTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
         List<String> result = new ArrayList<>();
 
-        if(args.length == 1)
-        {
-            if(sender.hasPermission("foxsnow.admin"))
-            {
+        if(args.length == 1) {
+            if(sender.hasPermission("foxsnow.admin")) {
                 result.add("reload");
                 result.add("why");
             }
-            if(sender.hasPermission("foxsnow.toggle")  || !config.get().getBoolean("require-permission"))
-            {
+            if(sender.hasPermission("foxsnow.toggle")  || !config.get().getBoolean("require-permission")) {
                 result.add("toggle");
             }
         }

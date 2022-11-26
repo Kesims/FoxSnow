@@ -14,14 +14,10 @@ import org.bukkit.entity.Player;
 
 public class foxSnow implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args)
-    {
-        if(args.length == 1)
-        {
-            if(args[0].equalsIgnoreCase("reload"))
-            {
-                if(sender.hasPermission("foxsnow.admin"))
-                {
+    public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
+        if(args.length == 1) {
+            if(args[0].equalsIgnoreCase("reload")) {
+                if(sender.hasPermission("foxsnow.admin")) {
                     config.reload();
                     dataStorage.loadDisabledfromStorage();
                     messages.reload();
@@ -29,35 +25,27 @@ public class foxSnow implements CommandExecutor {
                     chat.sendMessage(sender, "&aPlugin successfully reloaded!");
                     checkParticleIntegrity.check();
                 }
-                else
-                {
+                else {
                     chat.sendMessage(sender, messages.getMessage("no-perms"));
                 }
             }
-            if(args[0].equalsIgnoreCase("toggle"))
-            {
-                if(sender instanceof Player p)
-                {
-                    if(p.hasPermission("foxsnow.toggle") || !config.get().getBoolean("require-permission"))
-                    {
-                        if(dataStorage.disableSnow.contains(p.getName()))
-                        {
+            if(args[0].equalsIgnoreCase("toggle")) {
+                if(sender instanceof Player p) {
+                    if(p.hasPermission("foxsnow.toggle") || !config.get().getBoolean("require-permission")) {
+                        if(dataStorage.disableSnow.contains(p.getName())) {
                             dataStorage.disableSnow.remove(p.getName());
                             chat.sendMessage(p, messages.getMessage("effect-enabled"));
                         }
-                        else
-                        {
+                        else {
                             dataStorage.disableSnow.add(p.getName());
                             chat.sendMessage(p, messages.getMessage("effect-disabled"));
                         }
                     }
-                    else
-                    {
+                    else {
                         chat.sendMessage(p, messages.getMessage("no-perms"));
                     }
                 }
-                else
-                {
+                else {
                     report.info("This command can be only used in-game!");
                 }
             }

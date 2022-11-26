@@ -15,18 +15,14 @@ public class config
     private static FileConfiguration config;
 
 
-    public static void setup()
-    {
+    public static void setup() {
         file = new File(misc.plugin.getDataFolder(), "config.yml");
 
-        if (!file.exists())
-        {
-            try
-            {
+        if (!file.exists()) {
+            try {
                 misc.plugin.saveResource("config.yml", false);
             }
-            catch(Exception e)
-            {
+            catch(Exception e) {
                 report.error("Couldn't create config.yml file!");
             }
         }
@@ -34,19 +30,15 @@ public class config
         autoUpdate();
     }
 
-    public static void autoUpdate()
-    {
-        try
-        {
+    public static void autoUpdate() {
+        try {
             if(config == null) setup();
 
             InputStreamReader d = new InputStreamReader(misc.plugin.getResource("config.yml"), StandardCharsets.UTF_8);
             FileConfiguration defaults = YamlConfiguration.loadConfiguration(d);
             boolean wasUpdated = false;
-            for(String key : defaults.getKeys(false))
-            {
-                if(!config.contains(key))
-                {
+            for(String key : defaults.getKeys(false)) {
+                if(!config.contains(key)) {
                     config.addDefault(key, defaults.get(key));
                     report.warn("config.yml updated, new option added: &f" + key + ": " + defaults.get(key));
                     wasUpdated = true;
@@ -63,8 +55,7 @@ public class config
             config.options().copyHeader(true);
             if (wasUpdated) save();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             report.error(e.getMessage());
         }
     }
@@ -74,14 +65,11 @@ public class config
         return config;
     }
 
-    public static void save()
-    {
-        try
-        {
+    public static void save() {
+        try {
             config.save(file);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             report.error("Couldn't save config.yml");
         }
     }

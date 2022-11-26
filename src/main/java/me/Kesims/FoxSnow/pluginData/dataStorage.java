@@ -16,19 +16,16 @@ public class dataStorage
 
 
     // SAVES AND LOADS ----------------------------------------------------------------
-    public static void loadDisabledfromStorage()
-    {
+    public static void loadDisabledfromStorage() {
 
-        if(disabledPlayers.get().contains("disabled"))
-        {
+        if(disabledPlayers.get().contains("disabled")) {
             disableSnow = disabledPlayers.get().getStringList("disabled");
 
         }
         report.debug("Loaded plugin data!");
     }
 
-    public static void saveDisabledToStorage()
-    {
+    public static void saveDisabledToStorage() {
         disabledPlayers.get().set("disabled", disableSnow);
     }
 }

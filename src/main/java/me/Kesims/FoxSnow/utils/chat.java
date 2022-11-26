@@ -9,18 +9,15 @@ public class chat
 {
     static String prefix = config.get().getString("plugin-prefix");
 
-    public static String colored(String message)
-    {
+    public static String colored(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void sendMessage(Player p, String message)
-    {
+    public static void sendMessage(Player p, String message) {
         p.sendMessage(chat.colored(prefix + message));
     }
 
-    public static void sendMessage(CommandSender s, String message)
-    {
+    public static void sendMessage(CommandSender s, String message) {
         s.sendMessage(chat.colored(prefix + message));
     }
 

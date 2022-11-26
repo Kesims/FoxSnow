@@ -13,18 +13,14 @@ public class disabledPlayers
     private static FileConfiguration disabledPlayers;
 
 
-    public static void setup()
-    {
+    public static void setup() {
         file = new File(misc.plugin.getDataFolder()+ "/pluginData", "disabledPlayers.yml");
 
-        if (!file.exists()) //Check if the file exists, else create new one
-        {
-            try
-            {
+        if (!file.exists()) { //Check if the file exists, else create new one
+            try {
                 file.createNewFile();
             }
-            catch(Exception e)
-            {
+            catch(Exception e) {
                 report.error("Couldn't create disabledPlayers.yml!");
             }
         }
@@ -38,18 +34,15 @@ public class disabledPlayers
 
     public static void save()
     {
-        try
-        {
+        try {
             disabledPlayers.save(file);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             report.error("Couldn't save disabledPlayers.yml");
         }
     }
 
-    public static void reload()
-    {
+    public static void reload() {
         disabledPlayers = YamlConfiguration.loadConfiguration(file);
     }
 

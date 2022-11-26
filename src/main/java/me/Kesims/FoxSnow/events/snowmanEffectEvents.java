@@ -16,23 +16,20 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class snowmanEffectEvents implements Listener
 {
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent e)
-    {
+    public void onBlockBreak(BlockBreakEvent e) {
         if(snowmanBlocks.blockList.contains(e.getBlock()) && e.getBlock().getType() == Material.SNOW)
             e.setCancelled(true);
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e)
-    {
+    public void onPlayerMove(PlayerMoveEvent e) {
         Bukkit.getScheduler().runTaskAsynchronously(misc.plugin, new Runnable() {
             @Override
             public void run() {
                 Player p = e.getPlayer();
 
                 boolean snowmanEff = config.get().getInt("snowman-effect.range") > 0;
-                if(snowmanEff && effectEvaluation.isEffectApplicable(p))
-                {
+                if(snowmanEff && effectEvaluation.isEffectApplicable(p)) {
                     snowmanEffect.handleEffect(p);
                 }
             }

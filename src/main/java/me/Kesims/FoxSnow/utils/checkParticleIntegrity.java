@@ -5,19 +5,14 @@ import org.bukkit.Particle;
 
 import java.util.List;
 
-public class checkParticleIntegrity
-{
-    public static boolean check()
-    {
+public class checkParticleIntegrity {
+    public static boolean check() {
         boolean result = true;
-        for(String ptc : (List<String>) config.get().get("particles"))
-        {
-            try
-            {
+        for(String ptc : (List<String>) config.get().get("particles")) {
+            try {
                 Particle p = Particle.valueOf(ptc);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 report.warn("Particle " + ptc + " is not correctly set up! Is the name correct?");
                 report.debug(e.getMessage());
                 result = false;

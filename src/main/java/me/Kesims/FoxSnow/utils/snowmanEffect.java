@@ -14,30 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class snowmanEffect
-{
+public class snowmanEffect {
     private static Random rnd = new Random();
 
-    public static List<Block> getApplicableBlocks(Location playerLoc) //the playerLoc should be Block location ideally
-    {
+    public static List<Block> getApplicableBlocks(Location playerLoc) { //the playerLoc should be Block location ideally
         List<Block> applicableBlocks = new ArrayList<>();
         int range = config.get().getInt("snowman-effect.range");
         double rangeSquared = Math.pow(range, 2);
-        for(int x = -range; x <= range; x++)
-        {
-            for(int z = -range; z <= range; z++)
-            {
+        for(int x = -range; x <= range; x++) {
+            for(int z = -range; z <= range; z++) {
                 if(Math.pow(z, 2) + Math.pow(x, 2) > rangeSquared) continue; //It should be a circle, so skip values beyond the circle range
                 Location tempLoc = playerLoc.clone().add(x, 0, z);
-                for(int y = -2; y <= 2; y++)
-                {
+                for(int y = -2; y <= 2; y++) {
                     Block b = tempLoc.clone().add(0, y, 0).getBlock();
                     if(b.getType() == Material.SNOW) break;
-                    if(b.getType() == Material.AIR)
-                    {
+                    if(b.getType() == Material.AIR) {
                         Material m = b.getLocation().clone().add(0, -1, 0).getBlock().getType();
-                        if(m.isSolid() && m.isOccluding() && m != Material.PACKED_ICE)
-                        {
+                        if(m.isSolid() && m.isOccluding() && m != Material.PACKED_ICE) {
                             applicableBlocks.add(b);
                             break;
                         }
@@ -48,14 +41,12 @@ public class snowmanEffect
         return applicableBlocks;
     }
 
-    public static void handleEffect(Player player) //This should run async -- task created in event handler
-    {
+    public static void handleEffect(Player player) { //This should run async -- task created in event handler
         if(dataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
 
         List<Block> blocks = getApplicableBlocks(player.getLocation().getBlock().getLocation());
 
-        if(!config.get().getBoolean("snowman-effect.destroyable"))
-        {
+        if(!config.get().getBoolean("snowman-effect.destroyable")) {
             snowmanBlocks.blockList.addAll(blocks);
         }
 
@@ -63,8 +54,7 @@ public class snowmanEffect
         Bukkit.getScheduler().runTask(misc.plugin, new Runnable() {
             @Override
             public void run() {
-                for(Block b : blocks)
-                {
+                for(Block b : blocks) {
                     b.setType(Material.SNOW);
                     Snow s = (Snow) b.getBlockData();
                     s.setLayers(3 - rnd.nextInt(3));
@@ -74,14 +64,11 @@ public class snowmanEffect
         });
 
         //Remove the snow from the fround after defined period
-        if(config.get().getInt("snowman-effect.duration") > 0)
-        {
+        if(config.get().getInt("snowman-effect.duration") > 0) {
             Bukkit.getScheduler().runTaskLater(misc.plugin, new Runnable() {
                 @Override
-                public void run()
-                {
-                    for(Block b : blocks)
-                    {
+                public void run() {
+                    for(Block b : blocks) {
                         if(b.getType() == Material.SNOW)
                             b.setType(Material.AIR);
                     }
