@@ -31,7 +31,7 @@ public class snowTask extends BukkitRunnable
         }
 
         for(Player p : Bukkit.getOnlinePlayers()) {
-            if(!effectEvaluation.isEffectApplicable(p)) continue;
+            if(!effectEvaluation.isEffectApplicable(p, effectType.SNOW)) continue;
 
             Location center = p.getLocation();
 

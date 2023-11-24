@@ -3,6 +3,7 @@ package me.Kesims.FoxSnow.events;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.pluginData.snowmanBlocks;
 import me.Kesims.FoxSnow.utils.effectEvaluation;
+import me.Kesims.FoxSnow.utils.effectType;
 import me.Kesims.FoxSnow.utils.misc;
 import me.Kesims.FoxSnow.utils.snowmanEffect;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class snowmanEffectEvents implements Listener
                 Player p = e.getPlayer();
 
                 boolean snowmanEff = config.get().getInt("snowman-effect.range") > 0;
-                if(snowmanEff && effectEvaluation.isEffectApplicable(p)) {
+                if(snowmanEff && effectEvaluation.isEffectApplicable(p, effectType.SNOWMAN)) {
                     snowmanEffect.handleEffect(p);
                 }
             }

@@ -21,6 +21,16 @@ public class worldGuardHook
             registry.register(flag2);
             var FOXSNOW_FORCE_DISABLE = flag2; // only set our field if there was no error
 
+            if(config.get().getBoolean("separate-snowman-permission")) {
+                StateFlag flag3 = new StateFlag("snowman-force-enable", false);
+                registry.register(flag3);
+                var SNOWMAN_FORCE_ENABLE = flag3; // only set our field if there was no error
+
+                StateFlag flag4 = new StateFlag("snowman-force-disable", false);
+                registry.register(flag4);
+                var SNOWMAN_FORCE_DISABLE = flag4; // only set our field if there was no error
+            }
+
             hookState.worldGuard = true;
             report.info("WorldGuard hook enabled!");
         }

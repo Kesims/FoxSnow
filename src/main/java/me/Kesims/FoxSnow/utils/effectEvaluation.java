@@ -20,7 +20,7 @@ import java.util.List;
 public class effectEvaluation {
 
     // Evaluates if effect should be shown to the player
-    public static boolean isEffectApplicable(Player p) {
+    public static boolean isEffectApplicable(Player p, effectType effectType) {
         Location center = p.getLocation();
 
         // WorldGuard hook has maximum priority, can bypass all other requirements
@@ -31,14 +31,37 @@ public class effectEvaluation {
             RegionQuery query = container.createQuery();
             ApplicableRegionSet set = query.getApplicableRegions(aLoc);
 
-            if(set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable"))) return false;
-            if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable"))) return true;
+            if(config.get().getBoolean("separate-snowman-permission")) { // If the permissions for effects are seperated
+                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOW) {
+                    if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable")))
+                        return false;
+                    if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable")))
+                        return true;
+                }
+                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOWMAN) {
+                    if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "snowman-force-disable")))
+                        return false;
+                    if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "snowman-force-enable")))
+                        return true;
+                }
+            }
+            else { // If the permissions for effects are not seperated, use foxsnow-force for everyting
+                if(set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable"))) return false;
+                if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable"))) return true;
+            }
         }
-
 
         if(dataStorage.disableSnow.contains(p.getName())) return false;
         if(!config.get().getList("enabled-worlds").contains(p.getWorld().getName())) return false;
-        if(config.get().getBoolean("require-permission") && !p.hasPermission("foxsnow.show")) return false;
+
+        if(config.get().getBoolean("require-permission")) {
+            if(config.get().getBoolean("separate-snowman-permission")) {
+                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOW && !p.hasPermission("foxsnow.show")) return false;
+                else if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOWMAN && !p.hasPermission("foxsnow.snowman")) return false;
+            }
+            else if(!p.hasPermission("foxsnow.show")) return false;
+        }
+
         if(config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()) return false;
         if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) return false;
         if(!evaluateBiomeFilter(p.getWorld().getBiome(p.getLocation()).name())) return false;

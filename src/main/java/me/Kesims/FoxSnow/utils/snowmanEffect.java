@@ -75,6 +75,7 @@ public class snowmanEffect {
                     snowmanBlocks.blockList.removeAll(blocks);
                 }
             }, config.get().getInt("snowman-effect.duration"));
+
         }
     }
 }

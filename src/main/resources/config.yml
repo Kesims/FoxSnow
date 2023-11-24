@@ -17,6 +17,10 @@ enabled-worlds:
   - another_example_world
 
 require-permission: true # Permission foxsnow.show and foxsnow.toggle won't be needed, if this is set to 'false'
+separate-snowman-permission: false # If enabled, snowman effect will be separated and players will need foxsnow.snowman
+                                   # to see the effect. This also creates new WorldGuard region flags specific
+                                   # for the snowman effect.
+
 
 snow-under-blocks: true # If set to false, snow will only appear in places where there is no block above it
 rain-disable-snow: true # Stop snow effect, if it is raining (or snowing) naturally in the world player is in
