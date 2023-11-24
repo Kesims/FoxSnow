@@ -3,6 +3,7 @@ package me.Kesims.FoxSnow.tasks;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
 import me.Kesims.FoxSnow.utils.effectEvaluation;
+import me.Kesims.FoxSnow.utils.effectType;
 import me.Kesims.FoxSnow.utils.report;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
