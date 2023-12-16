@@ -3,10 +3,7 @@ package me.Kesims.FoxSnow.commands;
 import me.Kesims.FoxSnow.files.config;
 import me.Kesims.FoxSnow.files.messages;
 import me.Kesims.FoxSnow.pluginData.dataStorage;
-import me.Kesims.FoxSnow.utils.chat;
-import me.Kesims.FoxSnow.utils.checkParticleIntegrity;
-import me.Kesims.FoxSnow.utils.effectEvaluation;
-import me.Kesims.FoxSnow.utils.report;
+import me.Kesims.FoxSnow.utils.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +21,7 @@ public class foxSnow implements CommandExecutor {
                     chat.reloadPrefix();
                     chat.sendMessage(sender, "&aPlugin successfully reloaded!");
                     checkParticleIntegrity.check();
+                    checkBlockIntegrity.check();
                 }
                 else {
                     chat.sendMessage(sender, messages.getMessage("no-perms"));

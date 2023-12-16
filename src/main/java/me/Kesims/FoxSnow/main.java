@@ -12,6 +12,7 @@ import me.Kesims.FoxSnow.pluginData.snowmanBlocks;
 import me.Kesims.FoxSnow.tabCompleters.foxSnowTabCompleter;
 import me.Kesims.FoxSnow.tasks.autoSave;
 import me.Kesims.FoxSnow.tasks.snowTask;
+import me.Kesims.FoxSnow.utils.checkBlockIntegrity;
 import me.Kesims.FoxSnow.utils.checkParticleIntegrity;
 import me.Kesims.FoxSnow.utils.placeholder;
 import me.Kesims.FoxSnow.utils.report;
@@ -32,6 +33,7 @@ public class main extends JavaPlugin {
         setupTabCompleters();
         setupData();
         checkParticleIntegrity.check();
+        checkBlockIntegrity.check();
         setupTasks();
         setupPlaceholders();
         setupEvents();
@@ -73,7 +75,7 @@ public class main extends JavaPlugin {
     }
     public void setupTasks() {
         snowTask s = new snowTask();
-        s.runTaskTimerAsynchronously(this, 100, 10L); //every 0.5 seconds
+        s.runTaskTimerAsynchronously(this, 100, 11L); //every 0.55 seconds
         taskPool.add(s);
 
         if(config.get().getBoolean("auto-save-data")) {
