@@ -53,7 +53,8 @@ public class snowTask extends BukkitRunnable
 
             //Particle snow effect
             Random gen = new Random();
-            Iterator<Particle> particleIterator = particles.iterator();
+            List<Particle> playerParticles = new ArrayList<>(particles);
+            Iterator<Particle> particleIterator = playerParticles.iterator();
             for(int i = 0; i < particleCount; i++) {
                 Location pLoc = center.clone().add(new Vector(gen.nextInt((2*max) + 1) - max, gen.nextInt((2*max) + 1)-max, gen.nextInt((2*max) + 1) - max));
                 try {
