@@ -42,6 +42,14 @@ particles:
   - SNOWFLAKE
   - END_ROD
 
+# Color for particles that are able to change color (for example dust particles).
+particle-base-color: 0xFFFFFF            # RGB color. Default is white: 0xFFFFFF.
+# Some particles also have transition color.
+particle-transition-color: 0xC0C0C0      # Default is silver: 0xC0C0C0.
+# Particles like FALLING_DUST are dependent on a material. Use materials such as SNOW_BLOCK for white falling dust particles, SAND for yellow particles etc.
+particle-material-color: SNOW_BLOCK      # Default is SNOW_BLOCK.
+
+
 # You can use biome filter to enable the effect only in certain biomes
 # Available types:
 # :: BLACKLIST (the effect will not appear in biomes listed bellow)

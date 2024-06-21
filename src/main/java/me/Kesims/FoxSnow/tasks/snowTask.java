@@ -13,10 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class snowTask extends BukkitRunnable
 {
@@ -85,18 +82,26 @@ public class snowTask extends BukkitRunnable
         });
     }
 
+    private Color getConfigColor(String path) {
+        return Color.fromRGB(config.get().getInt(path));
+    }
+
+    private Material getConfigMaterialType() {
+        return Material.getMaterial(Objects.requireNonNull(config.get().getString("particle-material-color")));
+    }
+
     private void spawnParticle(Player p, Particle particle, Location pLoc) {
         if(particle.getDataType().equals(Void.class)) {
             p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05);
         }
         else if(particle.getDataType().equals(Particle.DustOptions.class)) {
-            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustOptions(Color.WHITE, 1));
+            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustOptions(getConfigColor("particle-base-color"), 1));
         }
         else if(particle.getDataType().equals(Particle.DustTransition.class)) {
-            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustTransition(Color.WHITE, Color.SILVER, 1));
+            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustTransition(getConfigColor("particle-base-color"), getConfigColor("particle-transition-color"), 1));
         }
         else if(particle.getDataType().equals(BlockData.class)) {
-            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, Material.SNOW_BLOCK.createBlockData());
+            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, getConfigMaterialType().createBlockData());
         }
         else if(particle.getDataType().equals(ItemStack.class)) {
             p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new ItemStack(Material.SNOWBALL));
