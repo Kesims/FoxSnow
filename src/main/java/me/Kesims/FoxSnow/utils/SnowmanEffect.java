@@ -1,8 +1,8 @@
 package me.Kesims.FoxSnow.utils;
 
-import me.Kesims.FoxSnow.files.config;
-import me.Kesims.FoxSnow.pluginData.dataStorage;
-import me.Kesims.FoxSnow.pluginData.snowmanBlocks;
+import me.Kesims.FoxSnow.files.Config;
+import me.Kesims.FoxSnow.pluginData.DataStorage;
+import me.Kesims.FoxSnow.pluginData.SnowmanBlocks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class snowmanEffect {
+public class SnowmanEffect {
     private static Random rnd = new Random();
 
     public static List<Block> getApplicableBlocks(Location playerLoc) { //the playerLoc should be Block location ideally
         List<Block> applicableBlocks = new ArrayList<>();
-        int range = config.get().getInt("snowman-effect.range");
+        int range = Config.get().getInt("snowman-effect.range");
         double rangeSquared = Math.pow(range, 2);
         for(int x = -range; x <= range; x++) {
             for(int z = -range; z <= range; z++) {
@@ -42,16 +42,16 @@ public class snowmanEffect {
     }
 
     public static void handleEffect(Player player) { //This should run async -- task created in event handler
-        if(dataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
+        if(DataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
 
         List<Block> blocks = getApplicableBlocks(player.getLocation().getBlock().getLocation());
 
-        if(!config.get().getBoolean("snowman-effect.destroyable")) {
-            snowmanBlocks.blockList.addAll(blocks);
+        if(!Config.get().getBoolean("snowman-effect.destroyable")) {
+            SnowmanBlocks.blockList.addAll(blocks);
         }
 
         //Place the snow on the ground around the player
-        Bukkit.getScheduler().runTask(misc.plugin, new Runnable() {
+        Bukkit.getScheduler().runTask(Misc.plugin, new Runnable() {
             @Override
             public void run() {
                 for(Block b : blocks) {
@@ -64,17 +64,17 @@ public class snowmanEffect {
         });
 
         //Remove the snow from the fround after defined period
-        if(config.get().getInt("snowman-effect.duration") > 0) {
-            Bukkit.getScheduler().runTaskLater(misc.plugin, new Runnable() {
+        if(Config.get().getInt("snowman-effect.duration") > 0) {
+            Bukkit.getScheduler().runTaskLater(Misc.plugin, new Runnable() {
                 @Override
                 public void run() {
                     for(Block b : blocks) {
                         if(b.getType() == Material.SNOW)
                             b.setType(Material.AIR);
                     }
-                    snowmanBlocks.blockList.removeAll(blocks);
+                    SnowmanBlocks.blockList.removeAll(blocks);
                 }
-            }, config.get().getInt("snowman-effect.duration"));
+            }, Config.get().getInt("snowman-effect.duration"));
 
         }
     }

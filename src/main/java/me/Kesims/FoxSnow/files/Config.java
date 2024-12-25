@@ -1,7 +1,7 @@
 package me.Kesims.FoxSnow.files;
 
-import me.Kesims.FoxSnow.utils.misc;
-import me.Kesims.FoxSnow.utils.report;
+import me.Kesims.FoxSnow.utils.Misc;
+import me.Kesims.FoxSnow.utils.Report;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -9,21 +9,21 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class config
+public class Config
 {
     private static File file;
     private static FileConfiguration config;
 
 
     public static void setup() {
-        file = new File(misc.plugin.getDataFolder(), "config.yml");
+        file = new File(Misc.plugin.getDataFolder(), "config.yml");
 
         if (!file.exists()) {
             try {
-                misc.plugin.saveResource("config.yml", false);
+                Misc.plugin.saveResource("config.yml", false);
             }
             catch(Exception e) {
-                report.error("Couldn't create config.yml file!");
+                Report.error("Couldn't create config.yml file!");
             }
         }
         config = YamlConfiguration.loadConfiguration(file);
@@ -34,13 +34,13 @@ public class config
         try {
             if(config == null) setup();
 
-            InputStreamReader d = new InputStreamReader(misc.plugin.getResource("config.yml"), StandardCharsets.UTF_8);
+            InputStreamReader d = new InputStreamReader(Misc.plugin.getResource("config.yml"), StandardCharsets.UTF_8);
             FileConfiguration defaults = YamlConfiguration.loadConfiguration(d);
             boolean wasUpdated = false;
             for(String key : defaults.getKeys(false)) {
                 if(!config.contains(key)) {
                     config.addDefault(key, defaults.get(key));
-                    report.warn("config.yml updated, new option added: &f" + key + ": " + defaults.get(key));
+                    Report.warn("config.yml updated, new option added: &f" + key + ": " + defaults.get(key));
                     wasUpdated = true;
                 }
             }
@@ -56,7 +56,7 @@ public class config
             if (wasUpdated) save();
         }
         catch (Exception e) {
-            report.error(e.getMessage());
+            Report.error(e.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class config
             config.save(file);
         }
         catch (Exception e) {
-            report.error("Couldn't save config.yml");
+            Report.error("Couldn't save config.yml");
         }
     }
 

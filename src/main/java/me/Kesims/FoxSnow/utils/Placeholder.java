@@ -1,11 +1,11 @@
 package me.Kesims.FoxSnow.utils;
 
-import me.Kesims.FoxSnow.files.messages;
-import me.Kesims.FoxSnow.pluginData.dataStorage;
+import me.Kesims.FoxSnow.files.Messages;
+import me.Kesims.FoxSnow.pluginData.DataStorage;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 
-public class placeholder extends PlaceholderExpansion
+public class Placeholder extends PlaceholderExpansion
 {
     @Override
     public String getAuthor()
@@ -33,7 +33,7 @@ public class placeholder extends PlaceholderExpansion
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if(params.equalsIgnoreCase("enabled")) {
-            return dataStorage.disableSnow.contains(player.getName()) ? messages.getMessage("disabled-placeholder"):messages.getMessage("enabled-placeholder");
+            return DataStorage.disableSnow.contains(player.getName()) ? Messages.getMessage("disabled-placeholder"): Messages.getMessage("enabled-placeholder");
         }
         return null; // Placeholder is unknown by the Expansion
     }

@@ -8,37 +8,37 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import me.Kesims.FoxSnow.files.config;
-import me.Kesims.FoxSnow.files.messages;
-import me.Kesims.FoxSnow.pluginData.dataStorage;
-import me.Kesims.FoxSnow.pluginData.hookState;
+import me.Kesims.FoxSnow.files.Config;
+import me.Kesims.FoxSnow.files.Messages;
+import me.Kesims.FoxSnow.pluginData.DataStorage;
+import me.Kesims.FoxSnow.pluginData.HookState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class effectEvaluation {
+public class EffectEvaluation {
 
     // Evaluates if effect should be shown to the player
-    public static boolean isEffectApplicable(Player p, effectType effectType) {
+    public static boolean isEffectApplicable(Player p, EffectType effectType) {
         Location center = p.getLocation();
 
         // WorldGuard hook has maximum priority, can bypass all other requirements
-        if(hookState.worldGuard) {
+        if(HookState.worldGuard) {
             com.sk89q.worldedit.util.Location aLoc = BukkitAdapter.adapt(center);
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
             ApplicableRegionSet set = query.getApplicableRegions(aLoc);
 
-            if(config.get().getBoolean("separate-snowman-permission")) { // If the permissions for effects are seperated
-                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOW) {
+            if(Config.get().getBoolean("separate-snowman-permission")) { // If the permissions for effects are seperated
+                if (effectType == EffectType.SNOW) {
                     if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable")))
                         return false;
                     if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable")))
                         return true;
                 }
-                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOWMAN) {
+                if (effectType == EffectType.SNOWMAN) {
                     if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "snowman-force-disable")))
                         return false;
                     if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "snowman-force-enable")))
@@ -51,19 +51,19 @@ public class effectEvaluation {
             }
         }
 
-        if(dataStorage.disableSnow.contains(p.getName())) return false;
-        if(!config.get().getList("enabled-worlds").contains(p.getWorld().getName())) return false;
+        if(DataStorage.disableSnow.contains(p.getName())) return false;
+        if(!Config.get().getList("enabled-worlds").contains(p.getWorld().getName())) return false;
 
-        if(config.get().getBoolean("require-permission")) {
-            if(config.get().getBoolean("separate-snowman-permission")) {
-                if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOW && !p.hasPermission("foxsnow.show")) return false;
-                else if (effectType == me.Kesims.FoxSnow.utils.effectType.SNOWMAN && !p.hasPermission("foxsnow.snowman")) return false;
+        if(Config.get().getBoolean("require-permission")) {
+            if(Config.get().getBoolean("separate-snowman-permission")) {
+                if (effectType == EffectType.SNOW && !p.hasPermission("foxsnow.show")) return false;
+                else if (effectType == EffectType.SNOWMAN && !p.hasPermission("foxsnow.snowman")) return false;
             }
             else if(!p.hasPermission("foxsnow.show")) return false;
         }
 
-        if(config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()) return false;
-        if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) return false;
+        if(Config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()) return false;
+        if(p.getWorld().getTime() < Config.get().getInt("snowtime.start") || p.getWorld().getTime() > Config.get().getInt("snowtime.end")) return false;
         if(!evaluateBiomeFilter(p.getWorld().getBiome(p.getLocation()).name())) return false;
 
         return true; // Passed all requirements, effect should be shown
@@ -74,7 +74,7 @@ public class effectEvaluation {
         Location center = p.getLocation();
 
         // WorldGuard hook has maximum priority, can bypass all other requirements
-        if(hookState.worldGuard) {
+        if(HookState.worldGuard) {
             com.sk89q.worldedit.util.Location aLoc = BukkitAdapter.adapt(center);
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -82,59 +82,59 @@ public class effectEvaluation {
             ApplicableRegionSet set = query.getApplicableRegions(aLoc);
 
             if(set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-disable"))){
-                chat.sendMessage(p, messages.getMessage("debug-messages.hook-force-disable"));
+                Chat.sendMessage(p, Messages.getMessage("debug-messages.hook-force-disable"));
                 return;
             }
             if (set.testState(null, (StateFlag) Flags.fuzzyMatchFlag(registry, "foxsnow-force-enable"))) {
-                chat.sendMessage(p, messages.getMessage("debug-messages.snow-is-working"));
+                Chat.sendMessage(p, Messages.getMessage("debug-messages.snow-is-working"));
                 return;
             }
         }
 
 
-        if(dataStorage.disableSnow.contains(p.getName())){
-            chat.sendMessage(p, messages.getMessage("debug-messages.effect-toggled-off"));
+        if(DataStorage.disableSnow.contains(p.getName())){
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.effect-toggled-off"));
             return;
         }
-        if(!config.get().getList("enabled-worlds").contains(p.getWorld().getName())){
-            chat.sendMessage(p, messages.getMessage("debug-messages.world-not-configured"));
+        if(!Config.get().getList("enabled-worlds").contains(p.getWorld().getName())){
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.world-not-configured"));
             return;
         }
-        if(config.get().getBoolean("require-permission") && !p.hasPermission("foxsnow.show")) {
-            chat.sendMessage(p, messages.getMessage("debug-messages.missing-permission"));
+        if(Config.get().getBoolean("require-permission") && !p.hasPermission("foxsnow.show")) {
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.missing-permission"));
             return;
         }
-        if(config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()){
-            chat.sendMessage(p, messages.getMessage("debug-messages.rainy-weather"));
+        if(Config.get().getBoolean("rain-disable-snow")  && p.getWorld().hasStorm()){
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.rainy-weather"));
             return;
         }
-        if(p.getWorld().getTime() < config.get().getInt("snowtime.start") || p.getWorld().getTime() > config.get().getInt("snowtime.end")) {
-            chat.sendMessage(p, messages.getMessage("debug-messages.wrong-time"));
+        if(p.getWorld().getTime() < Config.get().getInt("snowtime.start") || p.getWorld().getTime() > Config.get().getInt("snowtime.end")) {
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.wrong-time"));
             return;
         }
         Location pLoc = p.getLocation();
-        if(!config.get().getBoolean("snow-under-blocks") && pLoc.getY() < pLoc.getWorld().getHighestBlockAt(pLoc).getY()){
-            chat.sendMessage(p, messages.getMessage("debug-messages.blocks-above"));
+        if(!Config.get().getBoolean("snow-under-blocks") && pLoc.getY() < pLoc.getWorld().getHighestBlockAt(pLoc).getY()){
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.blocks-above"));
             return;
         };
 
         if(!evaluateBiomeFilter(p.getWorld().getBiome(p.getLocation()).name())) {
-            chat.sendMessage(p, messages.getMessage("debug-messages.invalid-biome"));
+            Chat.sendMessage(p, Messages.getMessage("debug-messages.invalid-biome"));
             return;
         }
 
 
-        chat.sendMessage(p, messages.getMessage("debug-messages.snow-is-working"));
+        Chat.sendMessage(p, Messages.getMessage("debug-messages.snow-is-working"));
     }
 
 
     public static boolean evaluateBiomeFilter(String biomeName) {
-        if(!config.get().getBoolean("biome-filter.enabled")) return true;
-        List<String> biomeList = config.get().getStringList("biome-filter.biomes");
-        if(config.get().getString("biome-filter.type").equalsIgnoreCase("BLACKLIST")) {
+        if(!Config.get().getBoolean("biome-filter.enabled")) return true;
+        List<String> biomeList = Config.get().getStringList("biome-filter.biomes");
+        if(Config.get().getString("biome-filter.type").equalsIgnoreCase("BLACKLIST")) {
             return !biomeList.contains(biomeName);
         }
-        if(config.get().getString("biome-filter.type").equalsIgnoreCase("WHITELIST")) {
+        if(Config.get().getString("biome-filter.type").equalsIgnoreCase("WHITELIST")) {
             return biomeList.contains(biomeName);
         }
         return true;

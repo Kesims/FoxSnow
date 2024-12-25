@@ -1,6 +1,6 @@
 package me.Kesims.FoxSnow.pluginData;
 
-public class hookState
+public class HookState
 {
     public static boolean worldGuard = false;
 }

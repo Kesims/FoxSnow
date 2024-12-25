@@ -1,10 +1,10 @@
 package me.Kesims.FoxSnow.tasks;
 
-import me.Kesims.FoxSnow.files.config;
-import me.Kesims.FoxSnow.pluginData.dataStorage;
-import me.Kesims.FoxSnow.utils.effectEvaluation;
-import me.Kesims.FoxSnow.utils.effectType;
-import me.Kesims.FoxSnow.utils.report;
+import me.Kesims.FoxSnow.files.Config;
+import me.Kesims.FoxSnow.pluginData.DataStorage;
+import me.Kesims.FoxSnow.utils.EffectEvaluation;
+import me.Kesims.FoxSnow.utils.EffectType;
+import me.Kesims.FoxSnow.utils.Report;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -15,20 +15,20 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-public class snowTask extends BukkitRunnable
+public class SnowTask extends BukkitRunnable
 {
     @Override
     public void run() {
-        if(!dataStorage.areParticlesOk) return;
+        if(!DataStorage.areParticlesOk) return;
 
         // Cache configuration values
-        int max = config.get().getInt("max-particle-distance");
-        int particleCount = config.get().getInt("particle-count");
-        boolean snowUnderBlocks = config.get().getBoolean("snow-under-blocks");
+        int max = Config.get().getInt("max-particle-distance");
+        int particleCount = Config.get().getInt("particle-count");
+        boolean snowUnderBlocks = Config.get().getBoolean("snow-under-blocks");
 
 
         List<Particle> particles = new ArrayList<>();
-        for(String ptc : (List<String>) config.get().get("particles")) {
+        for(String ptc : (List<String>) Config.get().get("particles")) {
             try {
                 particles.add(Particle.valueOf(ptc));
             }
@@ -36,7 +36,7 @@ public class snowTask extends BukkitRunnable
         }
 
         List<Material> roofIgnoredMaterials = new ArrayList<>();
-        for (String mat : (List<String>) config.get().get("roof-ignored-blocks")) {
+        for (String mat : (List<String>) Config.get().get("roof-ignored-blocks")) {
             try {
                 roofIgnoredMaterials.add(Material.valueOf(mat));
             }
@@ -44,7 +44,7 @@ public class snowTask extends BukkitRunnable
         }
 
         Bukkit.getOnlinePlayers().parallelStream().forEach(p -> {
-            if(!effectEvaluation.isEffectApplicable(p, effectType.SNOW)) return;
+            if(!EffectEvaluation.isEffectApplicable(p, EffectType.SNOW)) return;
 
             Location center = p.getLocation();
 
@@ -71,7 +71,7 @@ public class snowTask extends BukkitRunnable
                     if(skipParticle) continue; // Do not create particle if there is a block above it or when it is ignored as roof
                 }
                 catch (Exception exc) {
-                    report.debug("Something went wrong, please, contact the developer.");
+                    Report.debug("Something went wrong, please, contact the developer.");
                 }
 
                 //SPAWN THE PARTICLE
@@ -83,11 +83,11 @@ public class snowTask extends BukkitRunnable
     }
 
     private Color getConfigColor(String path) {
-        return Color.fromRGB(config.get().getInt(path));
+        return Color.fromRGB(Config.get().getInt(path));
     }
 
     private Material getConfigMaterialType() {
-        return Material.getMaterial(Objects.requireNonNull(config.get().getString("particle-material-color")));
+        return Material.getMaterial(Objects.requireNonNull(Config.get().getString("particle-material-color")));
     }
 
     private void spawnParticle(Player p, Particle particle, Location pLoc) {

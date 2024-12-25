@@ -1,6 +1,6 @@
 package me.Kesims.FoxSnow.utils;
 
-public enum effectType {
+public enum EffectType {
     SNOW,
     SNOWMAN
 }
