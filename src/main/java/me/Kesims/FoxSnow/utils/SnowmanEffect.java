@@ -12,14 +12,28 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import static me.Kesims.FoxSnow.utils.Misc.random;
+import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.isUnderRoof;
 
 public class SnowmanEffect {
-    private static Random rnd = new Random();
+
+    private static int range = 0;
+    private static int duration = 0;
+    private static boolean destroyable = false;
+    private static boolean snowUnderBlocks = false;
+
+    public static void loadSnowmanEffectConfigurationValues() {
+        range = Config.get().getInt("snowman-effect.range");
+        duration = Config.get().getInt("snowman-effect.duration");
+        destroyable = Config.get().getBoolean("snowman-effect.destroyable");
+        snowUnderBlocks = Config.get().getBoolean("snowman-effect.under-roof");
+    }
+
+
 
     public static List<Block> getApplicableBlocks(Location playerLoc) { //the playerLoc should be Block location ideally
         List<Block> applicableBlocks = new ArrayList<>();
-        int range = Config.get().getInt("snowman-effect.range");
         double rangeSquared = Math.pow(range, 2);
         for(int x = -range; x <= range; x++) {
             for(int z = -range; z <= range; z++) {
@@ -31,6 +45,7 @@ public class SnowmanEffect {
                     if(b.getType() == Material.AIR) {
                         Material m = b.getLocation().clone().add(0, -1, 0).getBlock().getType();
                         if(m.isSolid() && m.isOccluding() && m != Material.PACKED_ICE) {
+                            if(!snowUnderBlocks && isUnderRoof(b.getLocation())) break;
                             applicableBlocks.add(b);
                             break;
                         }
@@ -46,7 +61,7 @@ public class SnowmanEffect {
 
         List<Block> blocks = getApplicableBlocks(player.getLocation().getBlock().getLocation());
 
-        if(!Config.get().getBoolean("snowman-effect.destroyable")) {
+        if(!destroyable) {
             SnowmanBlocks.blockList.addAll(blocks);
         }
 
@@ -57,14 +72,14 @@ public class SnowmanEffect {
                 for(Block b : blocks) {
                     b.setType(Material.SNOW);
                     Snow s = (Snow) b.getBlockData();
-                    s.setLayers(3 - rnd.nextInt(3));
+                    s.setLayers(3 - random.nextInt(3));
                     b.setBlockData(s);
                 }
             }
         });
 
         //Remove the snow from the fround after defined period
-        if(Config.get().getInt("snowman-effect.duration") > 0) {
+        if(duration > 0) {
             Bukkit.getScheduler().runTaskLater(Misc.plugin, new Runnable() {
                 @Override
                 public void run() {
@@ -74,7 +89,7 @@ public class SnowmanEffect {
                     }
                     SnowmanBlocks.blockList.removeAll(blocks);
                 }
-            }, Config.get().getInt("snowman-effect.duration"));
+            }, duration);
 
         }
     }

@@ -4,9 +4,7 @@ import me.Kesims.FoxSnow.files.Config;
 import me.Kesims.FoxSnow.pluginData.DataStorage;
 import me.Kesims.FoxSnow.utils.EffectEvaluation;
 import me.Kesims.FoxSnow.utils.EffectType;
-import me.Kesims.FoxSnow.utils.Report;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,69 +13,53 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
+import static me.Kesims.FoxSnow.utils.Misc.random;
+import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.isUnderRoof;
+
 public class SnowTask extends BukkitRunnable
 {
-    @Override
-    public void run() {
-        if(!DataStorage.areParticlesOk) return;
+    // Configuration values
+    private static int max = 0;
+    private static int particleCount = 0;
+    private static boolean snowUnderBlocks = false;
+    private static final List<Particle> particles = new ArrayList<>();
 
-        // Cache configuration values
-        int max = Config.get().getInt("max-particle-distance");
-        int particleCount = Config.get().getInt("particle-count");
-        boolean snowUnderBlocks = Config.get().getBoolean("snow-under-blocks");
+    public static void loadSnowTaskConfigurationValues() {
+        max = Config.get().getInt("max-particle-distance");
+        particleCount = Config.get().getInt("particle-count");
+        snowUnderBlocks = Config.get().getBoolean("snow-under-blocks");
 
-
-        List<Particle> particles = new ArrayList<>();
+        particles.clear();
         for(String ptc : (List<String>) Config.get().get("particles")) {
             try {
                 particles.add(Particle.valueOf(ptc));
             }
-            catch (Exception e) {}
+            catch (Exception ignored) {}
         }
+    }
 
-        List<Material> roofIgnoredMaterials = new ArrayList<>();
-        for (String mat : (List<String>) Config.get().get("roof-ignored-blocks")) {
-            try {
-                roofIgnoredMaterials.add(Material.valueOf(mat));
-            }
-            catch (Exception e){}
-        }
+    @Override
+    public void run() {
+        if(!DataStorage.areParticlesOk) return;
 
-        Bukkit.getOnlinePlayers().parallelStream().forEach(p -> {
-            if(!EffectEvaluation.isEffectApplicable(p, EffectType.SNOW)) return;
+        Bukkit.getOnlinePlayers().parallelStream().forEach(player -> {
+            if(!EffectEvaluation.isEffectApplicable(player, EffectType.SNOW)) return;
 
-            Location center = p.getLocation();
+            Location center = player.getLocation();
 
             //Particle snow effect
-            Random gen = new Random();
             List<Particle> playerParticles = new ArrayList<>(particles);
             Iterator<Particle> particleIterator = playerParticles.iterator();
             for(int i = 0; i < particleCount; i++) {
-                Location pLoc = center.clone().add(new Vector(gen.nextInt((2*max) + 1) - max, gen.nextInt((2*max) + 1)-max, gen.nextInt((2*max) + 1) - max));
-                try {
-                    Block highestBlock = pLoc.getWorld().getHighestBlockAt(pLoc);
-                    boolean skipParticle = false;
-                    if(!snowUnderBlocks && pLoc.getY() < highestBlock.getY()) {
-                        Location currentBlockLoc = highestBlock.getLocation().clone();
-                        while (currentBlockLoc.getBlockY() > pLoc.getBlockY()+2) {
-                            Material currentMaterial = currentBlockLoc.getBlock().getType();
-                            if(!currentMaterial.isAir() && !roofIgnoredMaterials.contains(currentMaterial)) {
-                                skipParticle = true;
-                                break;
-                            }
-                            currentBlockLoc = currentBlockLoc.add(0,-1,0);
-                        }
-                    }
-                    if(skipParticle) continue; // Do not create particle if there is a block above it or when it is ignored as roof
-                }
-                catch (Exception exc) {
-                    Report.debug("Something went wrong, please, contact the developer.");
-                }
+                Location particleLoc = center.clone().add(new Vector(random.nextInt((2*max) + 1) - max, random.nextInt((2*max) + 1)-max, random.nextInt((2*max) + 1) - max));
+
+                // Skip the particle if it's under a roof and snowUnderBlocks is false. Offset by 2 because of particle movement
+                if(!snowUnderBlocks) if (isUnderRoof(particleLoc.clone().add(0, -2, 0))) continue;
 
                 //SPAWN THE PARTICLE
                 Particle particle = particleIterator.next();
                 if(!particleIterator.hasNext()) particleIterator = particles.iterator(); // Reset iterator if end of list is reached
-                spawnParticle(p, particle, pLoc);
+                spawnParticle(player, particle, particleLoc);
             }
         });
     }
