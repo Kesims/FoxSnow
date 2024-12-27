@@ -10,8 +10,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import static me.Kesims.FoxSnow.tasks.SnowTask.loadSnowTaskConfigurationValues;
+import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.loadRoofCacheConfigurationValues;
 import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.loadRoofIgnoredMaterials;
 import static me.Kesims.FoxSnow.utils.SnowmanEffect.loadSnowmanEffectConfigurationValues;
+import static me.Kesims.FoxSnow.utils.PerformanceMonitor.loadPerformanceMonitorConfigurationValues;
 
 public class Config
 {
@@ -32,9 +34,11 @@ public class Config
         }
         config = YamlConfiguration.loadConfiguration(file);
         autoUpdate();
-        loadRoofIgnoredMaterials();
         loadSnowTaskConfigurationValues();
         loadSnowmanEffectConfigurationValues();
+        loadPerformanceMonitorConfigurationValues();
+        loadRoofCacheConfigurationValues();
+        loadRoofIgnoredMaterials();
     }
 
     public static void autoUpdate() {
@@ -44,16 +48,28 @@ public class Config
             InputStreamReader d = new InputStreamReader(Misc.plugin.getResource("config.yml"), StandardCharsets.UTF_8);
             FileConfiguration defaults = YamlConfiguration.loadConfiguration(d);
             boolean wasUpdated = false;
-            for(String key : defaults.getKeys(false)) {
-                if(!config.contains(key)) {
+            for (String key : defaults.getKeys(false)) {
+                if (!config.contains(key)) {
                     config.addDefault(key, defaults.get(key));
                     Report.warn("config.yml updated, new option added: &f" + key + ": " + defaults.get(key));
                     wasUpdated = true;
+                } else {
+                    // Check for level 2 keys
+                    if (defaults.isConfigurationSection(key)) {
+                        for (String subKey : defaults.getConfigurationSection(key).getKeys(false)) {
+                            String fullKey = key + "." + subKey;
+                            if (!config.contains(fullKey)) {
+                                config.addDefault(fullKey, defaults.get(fullKey));
+                                Report.warn("config.yml updated, new option added: &f" + fullKey + ": " + defaults.get(fullKey));
+                                wasUpdated = true;
+                            }
+                        }
+                    }
                 }
             }
             config.options().copyDefaults(true);
             config.options().header("\n" +
-                    "Plugin made by Kesims, contact me on Discord for any help: Kesims#0001\n" +
+                    "Plugin made by Kesims, contact me on Discord for any help: Kesims\n" +
                     "Thanks for using my plugin!\n" +
                     "\n" +
                     "##############################\n" +
@@ -87,5 +103,7 @@ public class Config
         loadRoofIgnoredMaterials();
         loadSnowTaskConfigurationValues();
         loadSnowmanEffectConfigurationValues();
+        loadPerformanceMonitorConfigurationValues();
+        loadRoofCacheConfigurationValues();
     }
 }

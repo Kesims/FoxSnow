@@ -14,40 +14,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.Kesims.FoxSnow.utils.Misc.random;
+import static me.Kesims.FoxSnow.utils.Report.info;
 import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.isUnderRoof;
 
 public class SnowmanEffect {
 
-    private static int range = 0;
+    private static int configRange = 0;
+    private static int activeRange = 0;
     private static int duration = 0;
     private static boolean destroyable = false;
     private static boolean snowUnderBlocks = false;
 
     public static void loadSnowmanEffectConfigurationValues() {
-        range = Config.get().getInt("snowman-effect.range");
+        configRange = Config.get().getInt("snowman-effect.range");
         duration = Config.get().getInt("snowman-effect.duration");
         destroyable = Config.get().getBoolean("snowman-effect.destroyable");
         snowUnderBlocks = Config.get().getBoolean("snowman-effect.under-roof");
+
+        activeRange = configRange;
     }
 
-
-
-    public static List<Block> getApplicableBlocks(Location playerLoc) { //the playerLoc should be Block location ideally
+    public static List<Block> getApplicableBlocks(Location playerLoc) {
         List<Block> applicableBlocks = new ArrayList<>();
-        double rangeSquared = Math.pow(range, 2);
-        for(int x = -range; x <= range; x++) {
-            for(int z = -range; z <= range; z++) {
-                if(Math.pow(z, 2) + Math.pow(x, 2) > rangeSquared) continue; //It should be a circle, so skip values beyond the circle range
-                Location tempLoc = playerLoc.clone().add(x, 0, z);
-                for(int y = -2; y <= 2; y++) {
-                    Block b = tempLoc.clone().add(0, y, 0).getBlock();
-                    if(b.getType() == Material.SNOW) break;
-                    if(b.getType() == Material.AIR) {
-                        Material m = b.getLocation().clone().add(0, -1, 0).getBlock().getType();
-                        if(m.isSolid() && m.isOccluding() && m != Material.PACKED_ICE) {
-                            if(!snowUnderBlocks && isUnderRoof(b.getLocation())) break;
+        double rangeSquared = Math.pow(activeRange, 2);
+        Location tempLoc = playerLoc.clone(); // Reuse this location object
+
+        for (int x = -activeRange; x <= activeRange; x++) {
+            for (int z = -activeRange; z <= activeRange; z++) {
+                if (x * x + z * z > rangeSquared) continue;
+
+                tempLoc.setX(playerLoc.getX() + x);
+                tempLoc.setZ(playerLoc.getZ() + z);
+
+                for (int y = -2; y <= 2; y++) {
+                    tempLoc.setY(playerLoc.getY() + y);
+                    Block b = tempLoc.getBlock();
+                    if (b.getType() == Material.SNOW) break; // Skip entire column
+                    if (b.getType() == Material.AIR) {
+                        Block below = b.getRelative(0, -1, 0);
+                        Material belowType = below.getType();
+                        if (belowType.isSolid() && belowType.isOccluding() && belowType != Material.PACKED_ICE) {
+                            if (!snowUnderBlocks && isUnderRoof(b.getLocation())) break;
                             applicableBlocks.add(b);
-                            break;
+                            break; // Move to the next (x, z) column
                         }
                     }
                 }
@@ -58,6 +67,10 @@ public class SnowmanEffect {
 
     public static void handleEffect(Player player) { //This should run async -- task created in event handler
         if(DataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
+
+        if(!Config.get().getBoolean("dynamic-performance-adjustment.snowfall-only")) activeRange = (int) (configRange * PerformanceMonitor.getAdjustmentFactor()); // Adjust the range based on the performance
+        info("Active range: " + activeRange);
+        info("Config range: " + configRange);
 
         List<Block> blocks = getApplicableBlocks(player.getLocation().getBlock().getLocation());
 
@@ -90,7 +103,6 @@ public class SnowmanEffect {
                     SnowmanBlocks.blockList.removeAll(blocks);
                 }
             }, duration);
-
         }
     }
 }

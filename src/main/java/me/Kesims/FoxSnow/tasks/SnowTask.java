@@ -4,64 +4,76 @@ import me.Kesims.FoxSnow.files.Config;
 import me.Kesims.FoxSnow.pluginData.DataStorage;
 import me.Kesims.FoxSnow.utils.EffectEvaluation;
 import me.Kesims.FoxSnow.utils.EffectType;
+import me.Kesims.FoxSnow.utils.PerformanceMonitor;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 
+import static me.Kesims.FoxSnow.utils.Misc.plugin;
 import static me.Kesims.FoxSnow.utils.Misc.random;
 import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.isUnderRoof;
 
-public class SnowTask extends BukkitRunnable
-{
+public class SnowTask extends BukkitRunnable {
     // Configuration values
-    private static int max = 0;
+    private static int activeMax = 0;
+    private static int configMax = 0;
     private static int particleCount = 0;
     private static boolean snowUnderBlocks = false;
     private static final List<Particle> particles = new ArrayList<>();
 
     public static void loadSnowTaskConfigurationValues() {
-        max = Config.get().getInt("max-particle-distance");
+        configMax = Config.get().getInt("max-particle-distance");
         particleCount = Config.get().getInt("particle-count");
         snowUnderBlocks = Config.get().getBoolean("snow-under-blocks");
 
         particles.clear();
-        for(String ptc : (List<String>) Config.get().get("particles")) {
+        for (String ptc : (List<String>) Config.get().get("particles")) {
             try {
                 particles.add(Particle.valueOf(ptc));
-            }
-            catch (Exception ignored) {}
+            } catch (Exception ignored) {}
         }
+
+        activeMax = configMax;
     }
 
     @Override
     public void run() {
-        if(!DataStorage.areParticlesOk) return;
+        if (!DataStorage.areParticlesOk) return;
 
-        Bukkit.getOnlinePlayers().parallelStream().forEach(player -> {
-            if(!EffectEvaluation.isEffectApplicable(player, EffectType.SNOW)) return;
+        // Dynamic adjustment of particle distance range
+        activeMax = (int) (configMax * PerformanceMonitor.getAdjustmentFactor());
 
-            Location center = player.getLocation();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> handlePlayerSnowEffect(player));
+        }
+    }
 
-            //Particle snow effect
-            List<Particle> playerParticles = new ArrayList<>(particles);
-            Iterator<Particle> particleIterator = playerParticles.iterator();
-            for(int i = 0; i < particleCount; i++) {
-                Location particleLoc = center.clone().add(new Vector(random.nextInt((2*max) + 1) - max, random.nextInt((2*max) + 1)-max, random.nextInt((2*max) + 1) - max));
+    private void handlePlayerSnowEffect(Player player) {
+        if (!EffectEvaluation.isEffectApplicable(player, EffectType.SNOW)) return;
 
-                // Skip the particle if it's under a roof and snowUnderBlocks is false. Offset by 2 because of particle movement
-                if(!snowUnderBlocks) if (isUnderRoof(particleLoc.clone().add(0, -2, 0))) continue;
+        Location center = player.getLocation();
+        List<Particle> playerParticles = new ArrayList<>(particles);
+        Iterator<Particle> particleIterator = playerParticles.iterator();
 
-                //SPAWN THE PARTICLE
-                Particle particle = particleIterator.next();
-                if(!particleIterator.hasNext()) particleIterator = particles.iterator(); // Reset iterator if end of list is reached
-                spawnParticle(player, particle, particleLoc);
-            }
-        });
+        for (int i = 0; i < particleCount; i++) {
+            Location particleLoc = center.clone().add(
+                    random.nextInt((2 * activeMax) + 1) - activeMax,
+                    random.nextInt((2 * activeMax) + 1) - activeMax,
+                    random.nextInt((2 * activeMax) + 1) - activeMax
+            );
+
+            // Skip the particle if it's under a roof and snowUnderBlocks is false
+            if (!snowUnderBlocks && isUnderRoof(particleLoc.clone().add(0, -2, 0))) continue;
+
+            // Spawn the particle
+            Particle particle = particleIterator.next();
+            if (!particleIterator.hasNext()) particleIterator = particles.iterator(); // Reset iterator if end of list is reached
+            spawnParticle(player, particle, particleLoc);
+        }
     }
 
     private Color getConfigColor(String path) {
@@ -73,19 +85,18 @@ public class SnowTask extends BukkitRunnable
     }
 
     private void spawnParticle(Player p, Particle particle, Location pLoc) {
-        if(particle.getDataType().equals(Void.class)) {
+        if (particle.getDataType().equals(Void.class)) {
             p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05);
-        }
-        else if(particle.getDataType().equals(Particle.DustOptions.class)) {
-            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustOptions(getConfigColor("particle-base-color"), 1));
-        }
-        else if(particle.getDataType().equals(Particle.DustTransition.class)) {
-            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new Particle.DustTransition(getConfigColor("particle-base-color"), getConfigColor("particle-transition-color"), 1));
-        }
-        else if(particle.getDataType().equals(BlockData.class)) {
+        } else if (particle.getDataType().equals(Particle.DustOptions.class)) {
+            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05,
+                    new Particle.DustOptions(getConfigColor("particle-base-color"), 1));
+        } else if (particle.getDataType().equals(Particle.DustTransition.class)) {
+            p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05,
+                    new Particle.DustTransition(getConfigColor("particle-base-color"),
+                            getConfigColor("particle-transition-color"), 1));
+        } else if (particle.getDataType().equals(BlockData.class)) {
             p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, getConfigMaterialType().createBlockData());
-        }
-        else if(particle.getDataType().equals(ItemStack.class)) {
+        } else if (particle.getDataType().equals(ItemStack.class)) {
             p.spawnParticle(particle, pLoc, 0, 0, -1.8, 0, 0.05, new ItemStack(Material.SNOWBALL));
         }
     }

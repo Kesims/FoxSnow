@@ -4,12 +4,12 @@ import me.Kesims.FoxSnow.files.Config;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-import static me.Kesims.FoxSnow.utils.Report.info;
-
+import static me.Kesims.FoxSnow.utils.Misc.plugin;
 
 /**
  * RoofBlockService manages and provides information about roof blocks in the worlds, with ability to cache data to improve performance.
@@ -22,8 +22,22 @@ public class RoofBlockService {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static List<Material> roofIgnoredMaterials = new ArrayList<>();
 
-    static {
-        scheduler.scheduleAtFixedRate(RoofBlockService::invalidateOldEntries, 10, 10, TimeUnit.SECONDS);
+    private static boolean isCacheEnabled = false;
+    private static int cacheTime = 10000;
+
+    public static void loadRoofCacheConfigurationValues() {
+        isCacheEnabled = Config.get().getBoolean("roof-cache.enabled");
+        cacheTime = Config.get().getInt("roof-cache.cache-time") * 1000;
+    }
+
+
+    public static void startRoofCacheClearing() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                RoofBlockService.invalidateOldEntries();
+            }
+        }.runTaskTimerAsynchronously(plugin, 200L, 100L); // 200L represents 10 seconds in ticks (20 ticks per second)
     }
 
     public static void loadRoofIgnoredMaterials() {
@@ -58,7 +72,7 @@ public class RoofBlockService {
                 Material currentMaterial = currentBlockLoc.getBlock().getType();
                 if (!currentMaterial.isAir() && !roofIgnoredMaterials.contains(currentMaterial)) {
                     highestBlockY = currentBlockLoc.getBlockY();
-                    cacheRoofY(location.getWorld().getName(), location.getBlockX(), location.getBlockZ(), highestBlockY);
+                    if(isCacheEnabled) cacheRoofY(currentBlockLoc.getWorld().getName(), currentBlockLoc.getBlockX(), currentBlockLoc.getBlockZ(), highestBlockY);
                     break;
                 }
                 currentBlockLoc = currentBlockLoc.add(0, -1, 0);
@@ -71,6 +85,6 @@ public class RoofBlockService {
     private static void invalidateOldEntries() {
         // Invalidate the cache!
         long currentTime = System.currentTimeMillis();
-        cache.entrySet().removeIf(entry -> currentTime - entry.getValue().timestamp > 10_000);
+        cache.entrySet().removeIf(entry -> currentTime - entry.getValue().timestamp > cacheTime);
     }
 }
