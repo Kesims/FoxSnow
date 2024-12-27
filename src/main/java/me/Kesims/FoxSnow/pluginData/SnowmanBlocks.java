@@ -7,8 +7,6 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-
 public class SnowmanBlocks {
     public static List<Block> blockList = new ArrayList<>();
 

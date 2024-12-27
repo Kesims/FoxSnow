@@ -1,5 +1,5 @@
 #
-# Plugin made by Kesims, contact me on Discord for any help: Kesims#0001
+# Plugin made by Kesims, contact me on Discord for any help: Kesims
 # Thanks for using my plugin!
 #
 ###############################
@@ -66,8 +66,30 @@ snowman-effect:
   range: -1           # Set to -1 to disable, else defines range around player where snow will be placed on the ground. Do not set this too high (it could cause a lag, even when it is as much async as possible), especially if you have a lot of players. Ideal value is around 3.
   duration: 100       # How long will the snow stay on the ground before being removed, in ticks. Set to -1 to keep the snow on the ground "forever"
   destroyable: false  # Defines if players will be able to break the snow and get snowballs from it
+  under-blocks: true  # If set to false, snowman effect will not appear under roofs (roof-ignored-blocks applies).
 
 # You can simply enable and disable hooks for other plugins here.
 # It is recommended to disable all hooks that you are not using to increase FoxSnow performance
 hooks:
   worldguard: false
+
+
+
+##########################################
+### ADVANCED PERFORMANCE CONFIGURATION ###
+##########################################
+
+# If you are running into performance issues, you can adjust the following values to try to tweak the plugin to your server's needs.
+
+roof-cache:
+  enabled: true # Helps with performance while snow-under-blocks is set to false, especially in lobbies where many people accumulate in the same space
+  cache-time: 8 # Time in seconds after which the roof cache will be cleared (when roof is built/destroyed, this is how many seconds will the plugin take to notice)
+
+dynamic-performance-adjustment:
+  enabled: false                # If enabled, the plugin will monitor server TPS. If TPS starts falling, there will be automatic reduction in
+                                # the number of particles spawned by decreasing the distance radius.
+                                # ENABLING/DISABLING REQUIRES FULL PLUGIN RESTART, /fs reload IS NOT ENOUGH.
+  min-tps: 19.8                 # Minimum TPS value that will trigger the performance adjustment
+  adjustment-factor: 0.3        # Factor by which the distance radius will be multiplied when the TPS falls below min-tps
+                                # This value should be between 0 and 1 (0.3 = 30% reduction in distance radius, 0.5 = 50% reduction, 1.0 = 100% reduction)
+  snowfall-only: false          # If set to true, the performance adjustment will only affect the snowfall effect, but not the snowman effect

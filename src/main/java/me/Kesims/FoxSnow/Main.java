@@ -12,16 +12,15 @@ import me.Kesims.FoxSnow.pluginData.SnowmanBlocks;
 import me.Kesims.FoxSnow.tabCompleters.FoxSnowTabCompleter;
 import me.Kesims.FoxSnow.tasks.AutoSave;
 import me.Kesims.FoxSnow.tasks.SnowTask;
-import me.Kesims.FoxSnow.utils.CheckBlockIntegrity;
-import me.Kesims.FoxSnow.utils.CheckParticleIntegrity;
-import me.Kesims.FoxSnow.utils.Placeholder;
-import me.Kesims.FoxSnow.utils.Report;
+import me.Kesims.FoxSnow.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.startRoofCacheClearing;
 
 
 public class Main extends JavaPlugin {
@@ -83,6 +82,12 @@ public class Main extends JavaPlugin {
             a.runTaskTimerAsynchronously(this, 6000, 6000L); //every 5 minutes
             taskPool.add(a);
         }
+
+        if(Config.get().getBoolean("dynamic-performance-adjustment.enabled")) {
+            PerformanceMonitor.trackTPS();
+        }
+
+        startRoofCacheClearing();
     }
     private void setupEvents() {
         getServer().getPluginManager().registerEvents(new SnowmanEffectEvents(), this);
