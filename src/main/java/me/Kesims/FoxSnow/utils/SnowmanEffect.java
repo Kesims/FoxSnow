@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.Kesims.FoxSnow.utils.Misc.random;
-import static me.Kesims.FoxSnow.utils.Report.info;
 import static me.Kesims.FoxSnow.utils.RoofBlock.RoofBlockService.isUnderRoof;
 
 public class SnowmanEffect {
@@ -69,8 +68,6 @@ public class SnowmanEffect {
         if(DataStorage.disableSnow.contains(player.getName())) return; // Don't do anything if the effect is disabled
 
         if(!Config.get().getBoolean("dynamic-performance-adjustment.snowfall-only")) activeRange = (int) (configRange * PerformanceMonitor.getAdjustmentFactor()); // Adjust the range based on the performance
-        info("Active range: " + activeRange);
-        info("Config range: " + configRange);
 
         List<Block> blocks = getApplicableBlocks(player.getLocation().getBlock().getLocation());
 
