@@ -21,13 +21,14 @@ public class SnowTask extends BukkitRunnable {
     // Configuration values
     private static int activeMax = 0;
     private static int configMax = 0;
-    private static int particleCount = 0;
+    private static int configParticleCount = 0;
+    private static int activeParticleCount = 0;
     private static boolean snowUnderBlocks = false;
     private static final List<Particle> particles = new ArrayList<>();
 
     public static void loadSnowTaskConfigurationValues() {
         configMax = Config.get().getInt("max-particle-distance");
-        particleCount = Config.get().getInt("particle-count");
+        configParticleCount = Config.get().getInt("particle-count");
         snowUnderBlocks = Config.get().getBoolean("snow-under-blocks");
 
         particles.clear();
@@ -38,6 +39,7 @@ public class SnowTask extends BukkitRunnable {
         }
 
         activeMax = configMax;
+        activeParticleCount = configParticleCount;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class SnowTask extends BukkitRunnable {
 
         // Dynamic adjustment of particle distance range
         activeMax = (int) (configMax * PerformanceMonitor.getAdjustmentFactor());
+        activeParticleCount = (int) (configParticleCount * Math.pow(PerformanceMonitor.getAdjustmentFactor(), 3));
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> handlePlayerSnowEffect(player));
@@ -59,7 +62,7 @@ public class SnowTask extends BukkitRunnable {
         List<Particle> playerParticles = new ArrayList<>(particles);
         Iterator<Particle> particleIterator = playerParticles.iterator();
 
-        for (int i = 0; i < particleCount; i++) {
+        for (int i = 0; i < configParticleCount; i++) {
             Location particleLoc = center.clone().add(
                     random.nextInt((2 * activeMax) + 1) - activeMax,
                     random.nextInt((2 * activeMax) + 1) - activeMax,
