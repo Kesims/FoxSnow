@@ -83,13 +83,13 @@ hooks:
 
 roof-cache:
   enabled: true # Helps with performance while snow-under-blocks is set to false, especially in lobbies where many people accumulate in the same space
-  cache-time: 10 # Time in seconds after which the roof cache will be cleared (when roof is built/destroyed, this is how many seconds will the plugin take to notice)
+  cache-time: 8 # Time in seconds after which the roof cache will be cleared (when roof is built/destroyed, this is how many seconds will the plugin take to notice)
 
 dynamic-performance-adjustment:
   enabled: false                # If enabled, the plugin will monitor server TPS. If TPS starts falling, there will be automatic reduction in
                                 # the number of particles spawned by decreasing the distance radius.
                                 # ENABLING/DISABLING REQUIRES FULL PLUGIN RESTART, /fs reload IS NOT ENOUGH.
-  min-tps: 19.5                 # Minimum TPS value that will trigger the performance adjustment
+  min-tps: 19.8                 # Minimum TPS value that will trigger the performance adjustment
   adjustment-factor: 0.3        # Factor by which the distance radius will be multiplied when the TPS falls below min-tps
                                 # This value should be between 0 and 1 (0.3 = 30% reduction in distance radius, 0.5 = 50% reduction, 1.0 = 100% reduction)
   snowfall-only: false          # If set to true, the performance adjustment will only affect the snowfall effect, but not the snowman effect
